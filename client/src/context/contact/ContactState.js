@@ -11,8 +11,8 @@ import {
 	UPDATE_CONTACT,
 	FILTER_CONTACTS,
 	CLEAR_FILTER,
-	SET_ERROR,
-	CLEAR_ERROR,
+	SET_CONTACT_ERROR,
+	CLEAR_CONTACT_ERROR,
 } from '../types';
 
 const ContactState = (props) => {
@@ -83,14 +83,14 @@ const ContactState = (props) => {
 		dispatch({ type: CLEAR_FILTER });
 	};
 
-	//Set Error
+	//Set Contact Error
 	const setError = (msg) => {
-		dispatch({ type: SET_ERROR, payload: msg });
+		dispatch({ type: SET_CONTACT_ERROR, payload: msg });
 	};
 
-	//Clear Error
+	//Clear Contact Error
 	const clearError = () => {
-		dispatch({ type: CLEAR_ERROR });
+		dispatch({ type: CLEAR_CONTACT_ERROR });
 	};
 
 	return (
