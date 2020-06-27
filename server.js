@@ -9,9 +9,9 @@ connectDB();
 //Init middleware
 app.use(express.json({ extended: false }));
 
-app.get('/', (req, res) => {
-	res.json({ msg: 'Hello and welcome to Contact Keeper API ' });
-});
+// app.get('/', (req, res) => {
+// 	res.json({ msg: 'Hello and welcome to Contact Keeper API ' });
+// });
 
 //Define routes
 app.use('/api/users', require('./routes/users.routes'));
