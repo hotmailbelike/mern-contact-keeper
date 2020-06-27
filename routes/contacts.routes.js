@@ -47,14 +47,17 @@ router.put('/:id', auth, async (req, res) => {
 	try {
 		let contact = await Contact.findById(req.params.id);
 
-		//if contacts exits
+		//if contacts does not exist
 		if (!contact) return res.status(404).json({ msg: `No such contact data found` });
 
 		//check is contact is owned by user
 		if (contact.createdBy.toString() !== req.user._id)
 			return res.status(400).json({ msg: `Not Authorized` });
 
-		contact = await Contact.findByIdAndUpdate(req.params.id, req.body, { useFindAndModify: false });
+		contact = await Contact.findByIdAndUpdate(req.params.id, req.body, {
+			useFindAndModify: false,
+			new: true,
+		});
 		res.json(contact);
 	} catch (error) {
 		console.log('err', error.message);

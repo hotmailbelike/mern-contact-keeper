@@ -1,9 +1,10 @@
 import React, { useReducer } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 
 import ContactContext from './contactContext';
 import contactReducer from './contactReducer';
 import {
+	GET_CONTACTS,
 	ADD_CONTACT,
 	DELETE_CONTACT,
 	SET_CURRENT,
@@ -11,51 +12,79 @@ import {
 	UPDATE_CONTACT,
 	FILTER_CONTACTS,
 	CLEAR_FILTER,
+	CLEAR_CONTACTS,
 	SET_CONTACT_ERROR,
 	CLEAR_CONTACT_ERROR,
+	CONTACT_ERROR,
 } from '../types';
 
 const ContactState = (props) => {
 	const initialState = {
-		contacts: [
-			{
-				_id: 1,
-				name: 'Fish',
-				email: 'fish@fishing.com',
-				phone: '111-111-1111',
-				type: 'personal',
-			},
-			{
-				_id: 2,
-				name: 'Watson',
-				email: 'wat@son.com',
-				phone: '111-111-1111',
-				type: 'personal',
-			},
-			{
-				_id: 3,
-				name: 'sherlock',
-				email: 'sher@lock.com',
-				phone: '111-111-1111',
-				type: 'professional',
-			},
-		],
+		contacts: null,
 		current: null,
 		errorMsg: null,
+		error: null,
 		filtered: null,
+		loading: true,
 	};
 
 	const [state, dispatch] = useReducer(contactReducer, initialState);
 
+	//Get Contacts
+	const getContacts = async () => {
+		try {
+			const res = await axios.get('/api/contacts');
+			dispatch({ type: GET_CONTACTS, payload: res.data });
+		} catch (error) {
+			console.log('getContacts -> error', error);
+			dispatch({
+				type: CONTACT_ERROR,
+				payload:
+					error.res || `Fatal Error! Please check if your data has been input correctly`,
+			});
+		}
+	};
+
 	//Add Contact
-	const addContact = (contact) => {
-		contact._id = uuidv4();
-		dispatch({ type: ADD_CONTACT, payload: contact });
+	const addContact = async (contact) => {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
+
+		try {
+			const res = await axios.post('/api/contacts', contact, config);
+			dispatch({ type: ADD_CONTACT, payload: res.data });
+		} catch (error) {
+			console.log('addContact -> error', error);
+			dispatch({
+				type: CONTACT_ERROR,
+				payload:
+					error.res.msg ||
+					`Fatal Error! Please check if your data has been input correctly`,
+			});
+		}
 	};
 
 	//Delete Contact
-	const deleteContact = (id) => {
-		dispatch({ type: DELETE_CONTACT, payload: id });
+	const deleteContact = async (_id) => {
+		try {
+			await axios.delete(`/api/contacts/${_id}`);
+			dispatch({ type: DELETE_CONTACT, payload: _id });
+		} catch (error) {
+			console.log('deleteContact -> error', error);
+			dispatch({
+				type: CONTACT_ERROR,
+				payload:
+					error.res || `Fatal Error! Please check if your data has been input correctly`,
+			});
+		}
+	};
+
+	//Clear all Contacts
+	const clearContacts = () => {
+		dispatch({ type: CLEAR_CONTACTS });
 	};
 
 	//Set Current Contact
@@ -69,8 +98,24 @@ const ContactState = (props) => {
 	};
 
 	//Update Contact
-	const updateContact = (contact) => {
-		dispatch({ type: UPDATE_CONTACT, payload: contact });
+	const updateContact = async (contact) => {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
+
+		try {
+			const res = await axios.put(`/api/contacts/${contact._id}`, contact, config);
+			dispatch({ type: UPDATE_CONTACT, payload: res.data });
+		} catch (error) {
+			console.log('updateContact -> error', error);
+			dispatch({
+				type: CONTACT_ERROR,
+				payload:
+					error.res || `Fatal Error! Please check if your data has been input correctly`,
+			});
+		}
 	};
 
 	//Filter Contacs
@@ -99,6 +144,7 @@ const ContactState = (props) => {
 				contacts: state.contacts,
 				current: state.current,
 				errorMsg: state.errorMsg,
+				error: state.error,
 				filtered: state.filtered,
 				addContact,
 				deleteContact,
@@ -109,6 +155,8 @@ const ContactState = (props) => {
 				updateContact,
 				filterContacts,
 				clearFilter,
+				getContacts,
+				clearContacts,
 			}}
 		>
 			{props.children}

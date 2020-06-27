@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import AlertContext from './alertContext';
 import alertReducer from './alertReducer';
-import { SET_ALERT, REMOVE_ALERT } from '../types';
+import { SET_ALERT, REMOVE_ALERT, REMOVE_All_ALERTS } from '../types';
 
 const AlertState = (props) => {
 	const initialState = [];
@@ -18,11 +18,17 @@ const AlertState = (props) => {
 		setTimeout(() => dispatch({ type: REMOVE_ALERT, payload: id }), timeout);
 	};
 
+	//Remove All Alerts
+	const removeAllAlerts = () => {
+		dispatch({ type: REMOVE_All_ALERTS });
+	};
+
 	return (
 		<AlertContext.Provider
 			value={{
 				alerts: state,
 				setAlert,
+				removeAllAlerts,
 			}}
 		>
 			{props.children}

@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+
 import ContactContext from '../../context/contact/contactContext';
 
 const ContactForm = () => {
@@ -35,11 +36,11 @@ const ContactForm = () => {
 		if (!name) {
 			return setError('Contact Must have a name');
 		} else if (!email && !phone) {
-			return setError('Contact Must have at lease an email or phone');
+			return setError('Contact Must have at least an email or a phone number');
 		}
 		clearError();
 
-		if (!current) {
+		if (current === null) {
 			addContact(contact);
 		} else {
 			updateContact(contact);
@@ -60,8 +61,6 @@ const ContactForm = () => {
 			});
 		}
 	}, [contactContext, current]);
-
-	console.log('error', errorMsg);
 
 	return (
 		<form onSubmit={onSubmit}>

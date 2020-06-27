@@ -71,7 +71,7 @@ const Register = (props) => {
 					/>
 				</div>
 				<div className='form-group'>
-					<label htmlFor='confirmPassword'>Confirm Name</label>
+					<label htmlFor='confirmPassword'>Confirm Password</label>
 					<input
 						type='password'
 						name='confirmPassword'
